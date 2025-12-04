@@ -171,7 +171,7 @@ As the project stabilizes, I’ll document the exact command-line usage, image f
 
 ## Status
 
-* ✅ CPU schematic & PCB routed in KiCad.
+* ✅ CPU schematic & PCB routed in KiCad. (PCB currently in fabrication)
 * ✅ Switched from 28C16 to 28C64 EEPROMs (extra address lines tied low for now).
 * ✅ Basic Python assembler & ROM image generator started.
 * 🧪 Experimenting with initial ISA and test programs.
