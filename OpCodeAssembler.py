@@ -1,4 +1,4 @@
-# Input File Example (program.asm):
+# Input File Example (program.asm) :
 """
 ; Simple LED counter ROM
 ; Each instruction is 1 byte: [opcode][operand]
