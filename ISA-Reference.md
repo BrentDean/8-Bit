@@ -9,7 +9,7 @@ For the original project and videos, see:
 
 ## Overall format
 
-The is a very small “SAP-1 style” computer:
+The machine is a very small “SAP-1 style” computer:
 
 - **Data width:** 8 bits
 - **Instruction width:** 8 bits
