@@ -2,6 +2,8 @@
 
 > A from-scratch 8-bit CPU, plus Python tools to turn a tiny assembly language into real EEPROM contents.
 
+<img width="1084" height="875" alt="image" src="https://github.com/user-attachments/assets/160945aa-0196-4b6e-9c6c-54597b565c59" />
+
 ## Overview
 
 This project is my attempt to connect the “software world” I know (Python, data structures, etc.) with the real hardware that executes instructions.
