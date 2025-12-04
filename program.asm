@@ -1,4 +1,4 @@
-; Simple LED counter ROM
+; Simple LED counter ROM 
 ; Each instruction is 1 byte: [opcode][operand]
 
 ; 0x0: A = 0
