@@ -189,9 +189,9 @@ Things I’m using this project to learn more deeply:
 - Component selection and sourcing: reading datasheets, choosing specific 74xx/EEPROM parts, using sockets, and thinking about availability, cost, and substitutions.
 - How instructions are encoded and fetched on real hardware.
 - How microcode sequences control the datapath over multiple cycles.
-- How to design a small ISA that’s both workable and teachable.
+- How to design a small ISA that’s workable.
 - How to build simple tooling (assemblers, ROM generators) that mirror what “real” toolchains do, just at 8-bit scale.
-- How to connect the software I’m learning (Python, Java, data structures, etc.) directly to observable hardware behavior—using Python to generate ROM images and an Arduino Nano in C to actually program the EEPROMs.
+- How to connect the software I’m learning (Python, Java, data structures, etc.) directly to observable hardware behavior using Python to generate ROM images and an Arduino Nano in C to actually program the EEPROMs.
 
 If you’re also into educational CPUs, microcode, or ROM tooling and have suggestions, I’d love to hear them.
 
