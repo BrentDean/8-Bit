@@ -14,7 +14,7 @@ The goal is to design and build a simple 8-bit CPU on a custom PCB, then write a
 * Packs those opcodes (and eventually microcode) into the correct byte layout for 28C64 EEPROMs.
 * Lets me iterate quickly on instruction set design and control logic by just reprogramming ROMs.
 
-The initial ISA and architecture are loosely based on the classic Ben Eater 8-bit breadboard computer, but adapted to a single PCB with updated ICs, and a more explicit software toolchain.
+The initial ISA and architecture are based on the classic Ben Eater 8-bit breadboard computer, but adapted to a single PCB with updated ICs, and a more explicit software toolchain.
 
 It’s a learning project first: I’m using it to understand what actually happens between “I wrote some code” and “LEDs blink on a real machine.”
 
@@ -46,7 +46,7 @@ I’m using 28C64 EEPROMs with the extra address lines tied low for now, so the 
 
 PCB schematics and layout are done in KiCad; fabrication is in progress.
 
-## Relationship to the Ben Eater 8-bit Computer
+## Relationship to the Ben  8-bit Computer
 
 This project is inspired by Ben Eater’s 8-bit breadboard computer:
 
@@ -70,7 +70,7 @@ The ISA that I’m starting from includes core instructions like:
 | `OUT`    | Copy accumulator to output register    |
 | `HLT`    | Halt the CPU                           |
 
-My ISA keeps this basic structure and behavior as a starting point, then evolves as I expand the address space, and refine the control logic. A more detailed write-up of how my ISA relates to this “baseline” will live in `docs/ben-eater-isa.md` (work in progress).
+My ISA keeps this basic structure and behavior as a starting point, then evolves as I expand the address space, and refine the control logic.
 
 ## Instruction Set (Work in Progress)
 
