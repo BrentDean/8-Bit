@@ -14,6 +14,8 @@ The goal is to design and build a simple 8-bit CPU on a custom PCB, then write a
 * Packs those opcodes (and eventually microcode) into the correct byte layout for 28C64 EEPROMs.
 * Lets me iterate quickly on instruction set design and control logic by just reprogramming ROMs.
 
+The initial ISA and architecture are loosely based on the classic Ben Eater 8-bit breadboard computer, but adapted to a single PCB with updated ICs, and a more explicit software toolchain.
+
 It’s a learning project first: I’m using it to understand what actually happens between “I wrote some code” and “LEDs blink on a real machine.”
 
 ## Project Goals
@@ -26,6 +28,7 @@ It’s a learning project first: I’m using it to understand what actually happ
   * Parse a simple assembly language.
   * Emit the correct bytes for an instruction ROM and/or microcode ROM.
   * Output images suitable for programming a 28C64 EEPROM.
+* Use an Arduino Nano running a small C program as a simple EEPROM programmer, so the Python-generated ROM image can be burned directly into a 28C64.
 
 ## Hardware Summary
 
@@ -42,6 +45,32 @@ On the hardware side, the design currently includes:
 I’m using 28C64 EEPROMs with the extra address lines tied low for now, so the design behaves like a smaller ROM but gives me room to grow later. IC sockets are planned across the board so I can swap ROM contents as I experiment with different programs and microcode layouts.
 
 PCB schematics and layout are done in KiCad; fabrication is in progress.
+
+## Relationship to the Ben Eater 8-bit Computer
+
+This project is inspired by Ben Eater’s 8-bit breadboard computer:
+
+* 8-bit datapath.
+* 4-bit opcode + 4-bit operand instruction format.
+* Small shared program/data memory.
+* Simple accumulator-based design.
+
+The ISA that I’m starting from includes core instructions like:
+
+| Mnemonic | Meaning                                |
+| -------- | -------------------------------------- |
+| `LDA`    | Load accumulator from memory           |
+| `ADD`    | Add memory value to accumulator        |
+| `SUB`    | Subtract memory value from accumulator |
+| `STA`    | Store accumulator to memory            |
+| `LDI`    | Load immediate value into accumulator  |
+| `JMP`    | Unconditional jump                     |
+| `JC`     | Jump if carry flag set                 |
+| `JZ`     | Jump if zero flag set                  |
+| `OUT`    | Copy accumulator to output register    |
+| `HLT`    | Halt the CPU                           |
+
+My ISA keeps this basic structure and behavior as a starting point, then evolves as I expand the address space, and refine the control logic. A more detailed write-up of how my ISA relates to this “baseline” will live in `docs/ben-eater-isa.md` (work in progress).
 
 ## Instruction Set (Work in Progress)
 
@@ -111,7 +140,7 @@ The Python side of this repo is a small assembler / ROM image generator. Its res
 * Optionally produce:
 
   * A human-readable listing (addresses, bytes, decoded instructions).
-  * A hex/byte dump suitable for EEPROM programming.
+  * A hex/byte/binary image suitable for EEPROM programming.
 
 Design goals for the tool:
 
@@ -123,20 +152,22 @@ Design goals for the tool:
   * A microcode assembler (for the control ROM).
   * Shared utilities for packing bytes into 28C64-sized images.
 
+Once Python has generated the ROM image, the plan is to hand it off to an **Arduino Nano** running a small C program. The Nano will receive the bytes over serial, drive the address/data lines and write-enable pin on the 28C64, and burn the image directly into the EEPROM.
+
 ### How I’m using it right now
 
-Right now the workflow is intentionally simple:
+Right now the (intended) workflow is intentionally simple:
 
 1. Edit `program.asm` with the instructions I want to test.
 2. Run the Python assembler script to:
 
    * Parse the assembly.
    * Emit a text listing for debugging.
-   * Emit a hex/byte dump suitable for burning into the instruction EEPROM.
-3. Program the 28C64 with that image using an external EEPROM programmer.
+   * Emit a hex/byte/binary image representing the ROM contents.
+3. Send that ROM image to an Arduino Nano, which runs a small C program to drive the address/data lines and program the 28C64 EEPROM.
 4. Plug the ROM into the CPU board and watch what happens on the LEDs / output register.
 
-As the project stabilizes, I’ll document the exact command-line usage and output formats here.
+As the project stabilizes, I’ll document the exact command-line usage, image format, and Arduino programmer protocol here.
 
 ## Repository Layout
 
@@ -146,6 +177,7 @@ This repo is still early and will grow as the project matures, but the intended 
 8-Bit/
 ├── hardware/        # KiCad schematics, PCB layouts, and wiring notes (coming soon)
 ├── docs/            # Block diagrams, ISA descriptions, microcode tables (coming soon)
+│   └── ben-eater-isa.md  # Notes on the Ben Eater–style baseline ISA (planned)
 ├── software/
 │   ├── assembler/   # Python assembler + ROM image generator (current focus)
 │   └── examples/    # Example assembly programs and test cases
@@ -161,6 +193,7 @@ Right now most of the action is in the assembler script and example program file
 * ✅ Basic Python assembler & ROM image generator started.
 * 🧪 Experimenting with initial ISA and test programs.
 * 🔜 Define the control word format and start generating microcode ROM images.
+* 🔜 Arduino Nano–based EEPROM programmer in C.
 * 🔜 Add hardware photos, block diagrams, and full documentation.
 
 ## Learning Focus
@@ -171,6 +204,7 @@ Things I’m using this project to learn more deeply:
 * How microcode sequences control the datapath over multiple cycles.
 * How to design a small ISA that’s both workable and teachable.
 * How to build simple tooling (assemblers, ROM generators) that mirror what “real” toolchains do, just at 8-bit scale.
+* How to connect the software I’m learning (Python, Java, data structures, etc.) directly to observable hardware behavior.
 
 If you’re also into educational CPUs, microcode, or ROM tooling and have suggestions, I’d love to hear them.
 
