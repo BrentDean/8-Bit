@@ -169,23 +169,6 @@ Right now the (intended) workflow is intentionally simple:
 
 As the project stabilizes, I’ll document the exact command-line usage, image format, and Arduino programmer protocol here.
 
-## Repository Layout
-
-This repo is still early and will grow as the project matures, but the intended structure is:
-
-```text
-8-Bit/
-├── hardware/        # KiCad schematics, PCB layouts, and wiring notes (coming soon)
-├── docs/            # Block diagrams, ISA descriptions, microcode tables (coming soon)
-│   └── ben-eater-isa.md  # Notes on the Ben Eater–style baseline ISA (planned)
-├── software/
-│   ├── assembler/   # Python assembler + ROM image generator (current focus)
-│   └── examples/    # Example assembly programs and test cases
-└── README.md        # You are here
-```
-
-Right now most of the action is in the assembler script and example program files; hardware and docs will be added as the PCB comes back and is tested.
-
 ## Status
 
 * ✅ CPU schematic & PCB routed in KiCad.
