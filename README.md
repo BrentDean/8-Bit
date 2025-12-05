@@ -136,9 +136,8 @@ The Python side of this repo is a small assembler / ROM image generator. Its res
 1. Parse a simple assembly source file (e.g., `program.asm`).
 2. Convert mnemonics + operands into encoded bytes.
 3. Optionally produce:
-
-  * A human-readable listing (addresses, bytes, decoded instructions).
-  * A hex/byte/binary image suitable for EEPROM programming.
+    * A human-readable listing (addresses, bytes, decoded instructions).
+    * A hex/byte/binary image suitable for EEPROM programming.
 
 Design goals for the tool:
 
