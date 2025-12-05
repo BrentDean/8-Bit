@@ -1,4 +1,4 @@
-# Simple 8-bit Instruction Set (Reference)
+# Classic 8-Bit Instruction Set (Reference)
 
 This document summarizes the instruction set used in Ben Eater’s classic 8-bit breadboard computer project, which my design is loosely based on.
 
