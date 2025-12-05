@@ -6,7 +6,7 @@
 
 ## Overview
 
-This project is my attempt to connect the “software world” I know (Python, data structures, etc.) with the real hardware that executes instructions.
+This project is my attempt to connect the software world I know (Python, Java, Data Structures, etc.) with the real hardware that executes instructions.
 
 The goal is to design and build a simple 8-bit CPU on a custom PCB, then write a small toolchain in Python that:
 
@@ -14,9 +14,7 @@ The goal is to design and build a simple 8-bit CPU on a custom PCB, then write a
 * Packs those opcodes (and eventually microcode) into the correct byte layout for 28C64 EEPROMs.
 * Lets me iterate quickly on instruction set design and control logic by just reprogramming ROMs.
 
-The initial ISA and architecture are based on the classic Ben Eater 8-bit breadboard computer, but adapted to a single PCB with updated ICs, and a more explicit software toolchain.
-
-It’s a learning project first: I’m using it to understand what actually happens between “I wrote some code” and “LEDs blink on a real machine.”
+The initial Instruction Set Architecture (ISA) and CPU design start from the classic Ben Eater 8-bit breadboard computer, but are adapted to a single-PCB layout. I’ve updated some of the IC choices (for availability and integration) and I’m building a more explicit software toolchain around it, including a Python-based assembler/ROM loader that directly targets the microcode and program EEPROMs.
 
 ## Project Goals
 
@@ -44,9 +42,9 @@ On the hardware side, the design currently includes:
 
 I’m using 28C64 EEPROMs with the extra address lines tied low for now, so the design behaves like a smaller ROM but gives me room to grow later. IC sockets are planned across the board so I can swap ROM contents as I experiment with different programs and microcode layouts.
 
-PCB schematics and layout are done in KiCad; fabrication is in progress.
+PCB schematics and layout are done in KiCad; fabrication completion date Dec. 2025.
 
-## Relationship to the Ben  8-bit Computer
+## Relationship to the Ben Eater's 8-bit Computer
 
 This project is inspired by Ben Eater’s 8-bit breadboard computer:
 
@@ -172,28 +170,39 @@ As the project stabilizes, I’ll document the exact command-line usage, image f
 ## Status
 
 * ✅ CPU schematic & PCB routed in KiCad. (PCB currently in fabrication)
+* ✅ All required components sourced and received
 * ✅ Switched from 28C16 to 28C64 EEPROMs (extra address lines tied low for now).
 * ✅ Basic Python assembler & ROM image generator started.
+* 🧪 PCB assembly and initial electrical bring-up (power rails, clock, reset, basic continuity)
 * 🧪 Experimenting with initial ISA and test programs.
 * 🔜 Define the control word format and start generating microcode ROM images.
 * 🔜 Arduino Nano–based EEPROM programmer in C.
 * 🔜 Add hardware photos, block diagrams, and full documentation.
 
+![First batch of ICs and components laid out on the work mat](https://github.com/user-attachments/assets/fbcfeaa9-a79d-4684-85a2-baaf29e83c57)
+
 ## Learning Focus
 
 Things I’m using this project to learn more deeply:
 
-- Low-level CPU architecture: registers, buses, ALU, flags, and how a simple control unit ties it all together.
-- Digital logic design: glue logic, tri-state buses, latches vs. edge-triggered registers, and basic timing/cycle sequencing.
-- PCB design and fabrication: schematic capture in KiCad, layout, routing, decoupling, ground/power strategy, and designing something that’s actually manufacturable.
-- Component selection and sourcing: reading datasheets, choosing specific 74xx/EEPROM parts, using sockets, and thinking about availability, cost, and substitutions.
-- How instructions are encoded and fetched on real hardware.
-- How microcode sequences control the datapath over multiple cycles.
-- How to design a small ISA that’s workable.
-- How to build simple tooling (assemblers, ROM generators) that mirror what “real” toolchains do, just at 8-bit scale.
-- How to connect the software I’m learning (Python, Java, data structures, etc.) directly to observable hardware behavior using Python to generate ROM images and an Arduino Nano in C to actually program the EEPROMs.
+* Low-level CPU architecture: registers, buses, ALU, flags, and how a simple control unit ties it all together.
+* Digital logic design: glue logic, tri-state buses, latches vs. edge-triggered registers, and basic timing/cycle sequencing.
+* PCB design and fabrication: schematic capture in KiCad, layout, routing, decoupling, ground/power strategy, and designing something that’s actually manufacturable.
+* Component selection and sourcing: reading datasheets, choosing specific 74xx/EEPROM parts, using sockets, and thinking about availability, cost, and substitutions.
+* How instructions are encoded and fetched on real hardware.
+* How microcode sequences control the datapath over multiple cycles.
+* How to design a small ISA that’s workable.
+* How to build simple tooling (assemblers, ROM generators) that mirror what “real” toolchains do, just at 8-bit scale.
+* How to connect the software I’m learning (Python, Java, data structures, etc.) directly to observable hardware behavior using Python to generate ROM images and an Arduino Nano in C to actually program the EEPROMs.
 
 If you’re also into educational CPUs, microcode, or ROM tooling and have suggestions, I’d love to hear them.
+
+## Acknowledgements
+
+* [Ben Eater’s 8-bit breadboard computer](https://eater.net/8bit) provided the original SAP-style architecture and instruction format that this project builds on.
+* The single-board layout is influenced by the PCB design of The-Invent0r.
+
+This project is an independent, non-affiliated derivative work; any mistakes or extensions are my own.
 
 
 ## License
