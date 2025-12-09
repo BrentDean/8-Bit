@@ -59,7 +59,7 @@ On the hardware side, the design currently includes:
 
 I’m using 28C64 EEPROMs with the extra address lines tied low for now, so the design behaves like a smaller ROM but gives me room to grow later. IC sockets are planned across the board so I can swap ROM contents as I experiment with different programs and microcode layouts.
 
-PCB schematics and layout are done in KiCad; fabrication is expected to complete in Dec. 2025.
+PCB schematics and layout are done in KiCad; fabrication complete in Dec. 2025.
 
 ## Relationship to Ben Eater's 8-bit Computer
 
@@ -185,8 +185,8 @@ As the project stabilizes, I’ll document the exact command-line usage, image f
 
 ## Status
 
-* ✅ CPU schematic & PCB routed in KiCad. (PCB currently in fabrication)
-* ✅ All required components sourced and received
+* ✅ CPU schematic & PCB routed in KiCad. 
+* ✅ All required components sourced and received.
 * ✅ Switched from 28C16 to 28C64 EEPROMs (extra address lines tied low for now).
 * ✅ Basic Python assembler & ROM image generator started.
 * 🧪 PCB assembly and initial electrical bring-up (power rails, clock, reset, basic continuity)
