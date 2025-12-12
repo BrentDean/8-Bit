@@ -11,10 +11,10 @@ This project is my attempt to connect the software world I know (Python, Java, D
 The goal is to design and build a simple 8-bit CPU on a custom PCB, then write a small toolchain in Python that:
 
 * Assembles a tiny educational ISA into opcodes.
-* Packs those opcodes (and eventually microcode) into the correct byte layout for 28C64 EEPROMs.
-* Lets me iterate quickly on instruction set design and control logic by just reprogramming ROMs.
+* Packs those opcodes and the control ROM microcode (when I start changing/adding instructions) into the correct byte layout for 28C64 EEPROMs.
+* Lets me quickly change the instruction set and control logic by reprogramming ROMs.
 
-The initial Instruction Set Architecture (ISA) and CPU design start from the classic Ben Eater 8-bit breadboard computer, but are adapted to a single-PCB layout. I’ve updated some of the IC choices (for availability and integration) and I’m building a more explicit software toolchain around it, including a Python-based assembler/ROM loader that directly targets the microcode and program EEPROMs.
+The initial Instruction Set Architecture (ISA) and CPU design start from the classic Ben Eater 8-bit breadboard computer, but are adapted to a single-PCB layout. I’ve updated some of the IC choices (for better availability and functionality).
 
 ## Project Goals
 
@@ -168,26 +168,56 @@ Design goals for the tool:
 
 Once Python has generated the ROM image, the plan is to hand it off to an **Arduino Nano** running a small C program. The Nano will receive the bytes over serial, drive the address/data lines and write-enable pin on the 28C64, and burn the image directly into the EEPROM.
 
-### How I’m using it right now
+## EEPROM Programmer / “ROM Loader” (Arduino Nano)
 
-Right now the (intended) workflow is intentionally simple:
+To speed up ROM programming, I built a simple EEPROM programmer on a breadboard. It burns Python-generated images into an **AT28C64** using an **Arduino Nano**, **8-bit shift registers**, and a **ZIF socket** (easy chip swaps). This breadboard EEPROM programmer is based on the approach shown in Ben Eater’s 8-bit computer series and adapted to my ROM image workflow and AT28C64 pinout. The breadboard build is the proof-of-concept; the PCB version is being planned now for cleaner wiring and more reliable programming. 
 
-1. Edit `program.asm` with the instructions I want to test.
-2. Run the Python assembler script to:
+![Breadboard Post-Wire](https://github.com/user-attachments/assets/ed122e92-34ca-4568-861b-e0bb1d2ac3df)
 
-   * Parse the assembly.
-   * Emit a text listing for debugging.
-   * Emit a hex/byte/binary image representing the ROM contents.
-3. Send that ROM image to an Arduino Nano, which runs a small C program to drive the address/data lines and program the 28C64 EEPROM.
-4. Plug the ROM into the CPU board and watch what happens on the LEDs / output register.
+### What it does
 
-As the project stabilizes, I’ll document the exact command-line usage, image format, and Arduino programmer protocol here.
+* Programs bytes into a 28C64 at specific addresses (currently I only need the lowest 16 bytes for the 4-bit PC/16-address mode, but the programmer can write larger images too).
+* Optionally reads back bytes for verification.
+
+### Hardware concept
+
+A 28C64 needs:
+
+* **Address bus:** A0–A12 (13 lines)
+* **Data bus:** D0–D7 (8 lines)
+* **Control pins:** `/CE`, `/OE`, `/WE`
+
+The Nano doesn’t have enough GPIO for everything *and* serial, so the programmer uses **74HC595 8-Bit Shift Registers** to fan out control/address/data lines (SPI-style: `DATA`, `CLOCK`, `LATCH`), then the Nano toggles the EEPROM control pins to perform each write cycle.
+
+### How a write happens
+
+For each byte:
+
+1. Set the **address** lines to the target address.
+2. Present the **data** byte on D0–D7.
+3. Hold the EEPROM in write mode:
+
+   * `/CE` low (chip enabled)
+   * `/OE` high (disable output during writes)
+4. Pulse `/WE` low → high to commit the byte.
+5. Wait for the write cycle to finish.
+6. Read back the byte and compare.
+
+### Python → Arduino workflow
+
+Right now the workflow is intentionally simple:
+1. Write/edit assembly program `program.asm`
+2. Run the Python assembler to generate a ROM image (byte array)
+3. Send those bytes over serial to the Nano
+4. The Nano drives the shift registers and programs the AT28C64 in the ZIF socket
+5. Move the EEPROM to the CPU board and observe behavior on the LEDs / output register
 
 ## Status
 
 * ✅ CPU schematic & PCB routed in KiCad. 
 * ✅ All required components sourced and received.
 * ✅ Switched from 28C16 to 28C64 EEPROMs (extra address lines tied low for now).
+* ✅ EEPROM Loader proof-of-concept complete. PCB design underway.
 * ✅ Basic Python assembler & ROM image generator started.
 * 🧪 PCB assembly and initial electrical bring-up (power rails, clock, reset, basic continuity)
 * 🧪 Experimenting with initial ISA and test programs.
@@ -197,9 +227,10 @@ As the project stabilizes, I’ll document the exact command-line usage, image f
 
 ![First batch of ICs and components laid out on the work mat](https://github.com/user-attachments/assets/fbcfeaa9-a79d-4684-85a2-baaf29e83c57)
 
+
 ## Acknowledgements
 
-* [Ben Eater’s 8-bit breadboard computer](https://eater.net/8bit) provided the original SAP-style architecture and instruction format that this project builds on.
+* [Ben Eater’s 8-bit breadboard computer](https://eater.net/8bit) provided the original SAP-style architecture and instruction format that this project builds on. The EEPROM/microcode approach and overall build process were heavily informed by his videos, especially the 8-bit computer playlist [Ben Eater’s 8-bit breadboard computer](https://www.youtube.com/watch?v=K88pgWhEb1M).
 * The single-board layout is influenced by the PCB design of The-Invent0r.
 
 This project is an independent, non-affiliated derivative work; any mistakes or extensions are my own.
