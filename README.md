@@ -61,6 +61,15 @@ I’m using 28C64 EEPROMs with the extra address lines tied low for now, so the 
 
 PCB schematics and layout are done in KiCad; fabrication complete in Dec. 2025.
 
+## Python → Arduino workflow
+
+Right now the workflow is intentionally simple:
+1. Write/edit assembly program `program.asm`
+2. Run the Python assembler to generate a ROM image (byte array)
+3. Send those bytes over serial to the Nano
+4. The Nano drives the shift registers and programs the AT28C64 in the ZIF socket
+5. Move the EEPROM to the CPU board and observe behavior on the LEDs / output register
+
 ## Relationship to Ben Eater's 8-bit Computer
 
 This project is inspired by Ben Eater’s 8-bit breadboard computer:
@@ -152,19 +161,13 @@ The Python side of this repo is a small assembler / ROM image generator. Its res
 
 1. Parse a simple assembly source file (e.g., `program.asm`).
 2. Convert mnemonics + operands into encoded bytes.
-3. Optionally produce:
-    * A human-readable listing (addresses, bytes, decoded instructions).
-    * A hex/byte/binary image suitable for EEPROM programming.
+3. A human-readable listing (addresses, bytes, decoded instructions).
+4. A hex/byte/binary image suitable for EEPROM programming.
 
 Design goals for the tool:
 
-* **Explicit encoding:** All opcode/operand encodings live in one place so they can be changed as the ISA evolves.
-* **Deterministic layout:** Address `N` in the generated image always maps to the same place in the ROM and the same cycle in the CPU.
-* **Separation of concerns:** Eventually split into:
-
-  * An instruction assembler (for “user programs”).
-  * A microcode assembler (for the control ROM).
-  * Shared utilities for packing bytes into 28C64-sized images.
+* **Encoding lives in one place.** If I change an opcode or instruction format, I don’t want to hunt through the codebase to update it.
+* **Addresses are predictable.** Byte N in the output maps to address N in the EEPROM, so what I see in the listing matches what the hardware reads.
 
 Once Python has generated the ROM image, the plan is to hand it off to an **Arduino Nano** running a small C program. The Nano will receive the bytes over serial, drive the address/data lines and write-enable pin on the 28C64, and burn the image directly into the EEPROM.
 
@@ -203,15 +206,6 @@ For each byte:
 5. Wait for the write cycle to finish.
 6. Read back the byte and compare.
 
-### Python → Arduino workflow
-
-Right now the workflow is intentionally simple:
-1. Write/edit assembly program `program.asm`
-2. Run the Python assembler to generate a ROM image (byte array)
-3. Send those bytes over serial to the Nano
-4. The Nano drives the shift registers and programs the AT28C64 in the ZIF socket
-5. Move the EEPROM to the CPU board and observe behavior on the LEDs / output register
-
 ## Status
 
 * ✅ CPU schematic & PCB routed in KiCad. 
@@ -230,8 +224,8 @@ Right now the workflow is intentionally simple:
 
 ## Acknowledgements
 
-* [Ben Eater’s 8-bit breadboard computer](https://eater.net/8bit) provided the original SAP-style architecture and instruction format that this project builds on. The EEPROM/microcode approach and overall build process were heavily informed by his videos, especially the 8-bit computer playlist [Ben Eater’s 8-bit breadboard computer](https://www.youtube.com/watch?v=K88pgWhEb1M).
-* The single-board layout is influenced by the PCB design of The-Invent0r.
+* [Ben Eater’s 8-bit breadboard computer](https://eater.net/8bit) provided the original SAP-style architecture and instruction format that this project builds on. The EEPROM/microcode approach and overall build process were heavily informed by his videos, especially the 8-bit computer playlist [Build an Arduino EEPROM programmer](https://www.youtube.com/watch?v=K88pgWhEb1M).
+* The single-board layout is influenced by the PCB design of [The-Invent0r](https://github.com/The-Invent0r/).
 
 This project is an independent, non-affiliated derivative work; any mistakes or extensions are my own.
 
