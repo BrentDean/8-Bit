@@ -1,0 +1,14 @@
+Each Addr is a ROM address (what the Program Counter puts on the address bus).
+Each Byte is the value stored at that address in hex, and Binary is the same byte in bits.
+Using my ISA (4-bit opcode + 4-bit operand), those bits decode to instructions in the Meaning column (e.g., 0x50 = LDI 0, 0x4F = STA F).
+
+| Addr | Byte | Binary    | Meaning           |
+| ---- | ---- | --------- | ----------------- |
+| 0x00 | 0x50 | 0101 0000 | `LDI 0`           |
+| 0x01 | 0x4F | 0100 1111 | `STA F`           |
+| 0x02 | 0x1F | 0001 1111 | `LDA F`           |
+| 0x03 | 0xE0 | 1110 0000 | `OUT`             |
+| 0x04 | 0x2F | 0010 1111 | `ADD F`           |
+| 0x05 | 0x4F | 0100 1111 | `STA F`           |
+| 0x06 | 0x62 | 0110 0010 | `JMP 2`           |
+| 0x07 | 0xF0 | 1111 0000 | `HLT` (never hit) |
